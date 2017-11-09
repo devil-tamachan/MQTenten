@@ -1,4 +1,3 @@
-CGALのCore以外がほぼGPLだったため、MQDrawPolygonもGPL。
 例外: フリーではない メインプログラムとのリンクを許可します
 
 
