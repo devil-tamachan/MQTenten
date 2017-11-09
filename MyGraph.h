@@ -131,11 +131,6 @@ class MyGraph
       return true;
     }
     
-    bool checkEdgeUsed(int newIdx, std::vector<bool> &edgesUsedCheck)
-    {
-      return edgesUsedCheck[newIdx];
-    }
-    
     int GetEdgeIdxs_Longest_Cycle(std::vector<int> &path, std::vector<int> &ret/*仮想インデックス*/, std::vector<bool> &edgesUsedCheck, int w = 1, int i = 0)
     {
       const int pathEnd = path.size()-1;
@@ -407,77 +402,6 @@ class MyGraph
       return vis.numMax;
     }
     
-    void _GetCycle(std::vector<int> &cycle, std::vector<int> &realcycle, std::vector<std::vector<int>> &weight)
-    {
-      int lp = cycle.size()-1;
-      for(int i=0;i<lp;i++)
-      {
-        const int u = cycle[i];
-        const int v = cycle[i+1];
-        const int w = weight[u][v];
-        realcycle.push_back(table_vidx1[u]);
-        /*
-        if(w>1)
-        {
-          std::vector<int> edgeIdx;
-          GetEdges(u, v, edgeIdx);
-          int idxSize = edgeIdx.size();
-          for(int k=0;k<idxSize;k++)
-          {
-            MyEdge &e = edges[edgeIdx[k]];
-            if(e.v.size()==w+2)
-            {
-              for(int m=e.v.size()-1;m>=3;m--)realcycle.push_back(e.v[m].idx);
-              break;
-            }
-          }
-        }
-        */
-        realcycle.push_back(table_vidx1[v]);
-      }
-    }
-    
-    /*void _BestCycle(std::vector<int> &edges2)
-    {
-      
-      std::vector<std::vector<int>> weight;
-      MakeWeightmap(weight);
-      
-      std::vector<std::vector<int>> cycles;
-      int weight = _AllCycle(cycles, weight);
-      
-      if(cycles.size()==0)return;
-      int numCycle = 1;//cycles.size();
-      
-      SortEdges();
-      
-      //for(int i=0;i<numCycle;i++)
-      int i=0;
-      {
-        std::vector<int> &cycle = cycles[i];
-        int numEdge = cycle.size();
-        if(numEdge<3)return;//continue;
-
-        edges2.resize(numEdge);
-        
-        for(int k=0;k<numEdge;k++)
-        {
-          int l = cycle[k];
-          int r;
-          if(k+1==numEdge)r = cycle[0];
-          else r = cycle[k+1];
-          std::vector<int> edgeIdx;
-          GetEdges(l, r, edgeIdx);
-          if(edgeIdx.size()==0)continue;
-          if(edgeIdx.size()==1)
-          {
-            edges2[k] = edgeIdx[0];
-          } else {
-            edges2[k] = edgeIdx[0]; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TODO: 複数候補がある。判定するべき
-          }
-        }
-      }
-    }*/
     
     void _BestCycle(std::vector<int> &edges2)
     {
