@@ -308,7 +308,7 @@ class MyGraph
     
     struct cycle_catcher
     {
-      cycle_catcher(std::vector<std::vector<int>>& _cycles/*, std::vector<std::vector<int>>& _weight*/, MyGraph *_graph, int _numV)
+      cycle_catcher(std::vector<std::vector<int> >& _cycles/*, std::vector<std::vector<int>>& _weight*/, MyGraph *_graph, int _numV)
           : cycles(_cycles)/*, weight(_weight)*/, numMax(0), graph(_graph), numV(_numV)
       { }
 
@@ -369,7 +369,7 @@ class MyGraph
         }
         return w;
       }*/
-      std::vector<std::vector<int>>& cycles;
+      std::vector<std::vector<int> >& cycles;
       //std::vector<std::vector<int>>& weight;
       int numMax;
       MyGraph *graph;
@@ -378,7 +378,7 @@ class MyGraph
     typedef boost::directed_graph<> DiGraph;
     //typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::directedS> DiGraph;
 
-    int _AllCycle(std::vector<std::vector<int>> &cycles, std::vector<std::vector<int>> &weight)
+    int _AllCycle(std::vector<std::vector<int> > &cycles, std::vector<std::vector<int> > &weight)
     {
       DiGraph g;
       
@@ -406,10 +406,10 @@ class MyGraph
     void _BestCycle(std::vector<int> &edges2)
     {
       
-      std::vector<std::vector<int>> weightmap;
+      std::vector<std::vector<int> > weightmap;
       MakeWeightmap(weightmap);
       
-      std::vector<std::vector<int>> cycles;
+      std::vector<std::vector<int> > cycles;
       int weight = _AllCycle(cycles, weightmap);
       
       if(cycles.size()==0)return;
@@ -432,7 +432,7 @@ class MyGraph
       return;
     }
     
-    void _InitAdj(std::vector<std::vector<bool>> &adj, int N)
+    void _InitAdj(std::vector<std::vector<bool> > &adj, int N)
     {
       adj.resize(N);
       for(int i=0;i<N;i++)
@@ -441,7 +441,7 @@ class MyGraph
       }
     }
     
-    void MakeSucc(std::vector<std::vector<bool>> &succ)
+    void MakeSucc(std::vector<std::vector<bool> > &succ)
     {
       int N = GetNumV();
       _InitAdj(succ, N);
@@ -456,7 +456,7 @@ class MyGraph
       }
     }
     
-    void MakePred(std::vector<std::vector<bool>> &pred)
+    void MakePred(std::vector<std::vector<bool> > &pred)
     {
       int N = GetNumV();
       _InitAdj(pred, N);
@@ -470,13 +470,13 @@ class MyGraph
         pred[v][u] = true;
       }
     }
-    void _InitWeightmap(std::vector<std::vector<int>> &weight)
+    void _InitWeightmap(std::vector<std::vector<int> > &weight)
     {
       int N = GetNumV();
       std::vector<int> x(N, 1);
       weight.resize(N, x);
     }
-    void MakeWeightmap(std::vector<std::vector<int>> &weight)
+    void MakeWeightmap(std::vector<std::vector<int> > &weight)
     {
       _InitWeightmap(weight);
       
@@ -525,7 +525,7 @@ class MyGraph
         }
       }
       
-      std::vector<std::vector<bool>> succ;
+      std::vector<std::vector<bool> > succ;
       MakeSucc(succ);
       
       while(zero.size()>0)
@@ -561,13 +561,13 @@ class MyGraph
       
       int N = GetNumV();
       
-      std::vector<std::vector<bool>> pred;
+      std::vector<std::vector<bool> > pred;
       MakePred(pred);
       
-      std::vector<std::vector<int>> weight;
+      std::vector<std::vector<int> > weight;
       MakeWeightmap(weight);
       
-      std::vector<std::pair<int,int>> dist(N, std::make_pair(-1,-1));
+      std::vector<std::pair<int,int> > dist(N, std::make_pair(-1,-1));
       
       int lp = toporesult.size();
       for(int i=0;i<lp;i++)

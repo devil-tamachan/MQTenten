@@ -1,12 +1,16 @@
-
+ï»¿
 
 // TODO:
-//  EArc‚ª‚¨‚©‚µ‚¢‚Æ‚«‚ª‚ ‚é
-//  E“_‘Å‚¿‚ÌŠ®¬
-//  E‘ÎGPL‘Îô
+//  ãƒ»ArcãŒãŠã‹ã—ã„ã¨ããŒã‚ã‚‹
+//  ãƒ»ç‚¹æ‰“ã¡ã®å®Œæˆ
+//  ãƒ»å¯¾GPLå¯¾ç­–
 
+#if defined _WIN32 || defined __CYGWIN__
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#else
+#define _MAX_PATH PATH_MAX
+#endif
 #include <stdio.h>
 #include <math.h>
 #include <vector>
@@ -71,11 +75,17 @@ typedef CGAL::Delaunay_triangulation_2<K, Tds> DT;
 #include "TamaGraphLib.h"
 
 
+#if defined _WIN32 || defined __CYGWIN__
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
-	//ƒvƒ‰ƒOƒCƒ“‚Æ‚µ‚Ä‚Í“Á‚É•K—v‚Èˆ—‚Í‚È‚¢‚Ì‚ÅA‰½‚à‚¹‚¸‚ÉTRUE‚ğ•Ô‚·
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã¨ã—ã¦ã¯ç‰¹ã«å¿…è¦ãªå‡¦ç†ã¯ãªã„ã®ã§ã€ä½•ã‚‚ã›ãšã«TRUEã‚’è¿”ã™
     return TRUE;
 }
+#else
+__attribute__((constructor)) void DllMain() 
+{
+}
+#endif
 
 class TenTenWindow : public MQWindow
 {
@@ -139,17 +149,17 @@ TenTenWindow::TenTenWindow(MQWindowBase& parent) : MQWindow(parent), addvbtn(NUL
   //paramFrame->SetMatrixColumn(2);
 
 #ifdef ENABLE_TENUCHI
-  addvbtn = CreateButton(paramFrame, L"“_‘Å‚¿");
+  addvbtn = CreateButton(paramFrame, L"ç‚¹æ‰“ã¡");
   addvbtn->SetToggle(true);
   addvbtn->SetDown(true);
 #endif //#ifdef ENABLE_TENUCHI
-  delvbtn = CreateButton(paramFrame, L"“_Á‚µ");
+  delvbtn = CreateButton(paramFrame, L"ç‚¹æ¶ˆã—");
   delvbtn->SetToggle(true);
 #ifndef ENABLE_TENUCHI
   delvbtn->SetDown(true);
 #endif
 #ifdef ENABLE_TENUCHI
-  reEdgebtn = CreateButton(paramFrame, L"•Ó“\‚è’¼‚µ");
+  reEdgebtn = CreateButton(paramFrame, L"è¾ºè²¼ã‚Šç›´ã—");
   reEdgebtn->SetToggle(true);
 #endif //#ifdef ENABLE_TENUCHI
   
@@ -159,7 +169,7 @@ TenTenWindow::TenTenWindow(MQWindowBase& parent) : MQWindow(parent), addvbtn(NUL
 #endif //#ifdef ENABLE_TENUCHI
   delvbtn->AddClickEvent(this, &TenTenWindow::OnClickDelV);
   
-  chkArcSplit = CreateCheckBox(paramFrame, L"ŒÊ•ªŠ„");
+  chkArcSplit = CreateCheckBox(paramFrame, L"å¼§åˆ†å‰²");
   chkArcSplit->SetChecked(bArcSplit);
   chkArcSplit->AddChangedEvent(this, &TenTenWindow::OnCheckArcSplit);
 
@@ -186,11 +196,11 @@ public:
   
   BOOL AddVertexOnTri(MQDocument doc, int oi, int fi, MQPoint &hitpoint, bool bUpdateUndo);
   
-  // ¶ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚Æ‚«
+  // å·¦ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã¨ã
   virtual BOOL OnLeftButtonDown(MQDocument doc, MQScene scene, MOUSE_BUTTON_STATE& state);
-  // ¶ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚È‚ª‚çƒ}ƒEƒX‚ªˆÚ“®‚µ‚½‚Æ‚«
+  // å·¦ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãªãŒã‚‰ãƒã‚¦ã‚¹ãŒç§»å‹•ã—ãŸã¨ã
   //virtual BOOL OnLeftButtonMove(MQDocument doc, MQScene scene, MOUSE_BUTTON_STATE& state);
-  // ¶ƒ{ƒ^ƒ“‚ª—£‚³‚ê‚½‚Æ‚«
+  // å·¦ãƒœã‚¿ãƒ³ãŒé›¢ã•ã‚ŒãŸã¨ã
   //virtual BOOL OnLeftButtonUp(MQDocument doc, MQScene scene, MOUSE_BUTTON_STATE& state);
   
   int GetMode()
@@ -203,6 +213,12 @@ public:
     if(win)return win->bArcSplit;
     else return false;
   }
+#if __APPLE__
+  virtual MQBasePlugin *CreateNewPlugin()
+  {
+    return new TenTenPlugin();
+  }
+#endif
   
 private:
   BOOL bActive;
@@ -213,15 +229,15 @@ private:
 
 void TenTenPlugin::GetPlugInID(DWORD *Product, DWORD *ID)
 {
-  // ƒvƒƒ_ƒNƒg–¼(§ìÒ–¼)‚ÆID‚ğA‘S•”‚Å64bit‚Ì’l‚Æ‚µ‚Ä•Ô‚·
-  // ’l‚Í‘¼‚Æd•¡‚µ‚È‚¢‚æ‚¤‚Èƒ‰ƒ“ƒ_ƒ€‚È‚à‚Ì‚Å—Ç‚¢
+  // ãƒ—ãƒ­ãƒ€ã‚¯ãƒˆå(åˆ¶ä½œè€…å)ã¨IDã‚’ã€å…¨éƒ¨ã§64bitã®å€¤ã¨ã—ã¦è¿”ã™
+  // å€¤ã¯ä»–ã¨é‡è¤‡ã—ãªã„ã‚ˆã†ãªãƒ©ãƒ³ãƒ€ãƒ ãªã‚‚ã®ã§è‰¯ã„
   *Product = 0xA8BEE201;
   *ID      = 0x9A9D0493;
 }
 
 const char *TenTenPlugin::GetPlugInName(void)
 {
-  // ƒvƒ‰ƒOƒCƒ“–¼
+  // ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å
   return "MQTenTen           Copyright(C) 2017, tamachan";
 }
 
@@ -232,7 +248,7 @@ const char *TenTenPlugin::EnumString()
 
 BOOL TenTenPlugin::Initialize()
 {
-  // “Á‚É‰½‚à‚µ‚È‚¢‚Ì‚ÅA‚»‚Ì‚Ü‚ÜTRUE‚ğ•Ô‚·
+  // ç‰¹ã«ä½•ã‚‚ã—ãªã„ã®ã§ã€ãã®ã¾ã¾TRUEã‚’è¿”ã™
   return TRUE;
 }
 
@@ -250,64 +266,6 @@ MQBasePlugin *GetPluginClass()
 	static TenTenPlugin plugin;
 	return &plugin;
 }
-/*
-void AABB_AddMQObj2(std::list<Triangle> &triangles, MQDocument doc, MQObject o, int oi)
-{
-  if(o==NULL)return;
-  int numV = o->GetVertexCount();
-  int numF = o->GetFaceCount();
-  for(int k=0;k<numF;k++)
-  {
-    if(doc->IsSelectFace(oi, k)==FALSE)continue;
-    int numFV = o->GetFacePointCount(k);
-    if(numFV<3)continue;
-    
-    std::vector<int> index(numFV);
-    o->GetFacePointArray(k, &(*index.begin()));
-    
-    int numTri = numFV - 2;
-    std::vector<int> indices(numTri*3);
-    if(numFV==3)
-    {
-      indices[0] = 0;
-      indices[1] = 1;
-      indices[2] = 2;
-    } else {
-      std::vector<MQPoint> pts(numFV);
-      for(int i=0; i<numFV; i++)
-      {
-        pts[i] = o->GetVertex(index[i]);
-      }
-      doc->Triangulate(&(*pts.begin()), numFV, &(*indices.begin()), numTri*3);
-    }
-    for(int m=0;m<numTri;m++)
-    {
-      MQPoint p;
-      p = o->GetVertex(index[indices[m*3+0]]);
-      Point a(p.x, p.y, p.z);
-      p = o->GetVertex(index[indices[m*3+1]]);
-      Point b(p.x, p.y, p.z);
-      p = o->GetVertex(index[indices[m*3+2]]);
-      Point c(p.x, p.y, p.z);
-      
-      triangles.push_back(Triangle(a,b,c));
-    }
-  }
-}
-
-void AABB_AddMQObjs(std::list<Triangle> &triangles, MQDocument doc)
-{
-  //std::list<Triangle> triangles;
-  int numobj = doc->GetObjectCount();
-  for(int oi=0;oi<numobj;oi++)
-  {
-    MQObject o = doc->GetObject(oi);
-    if(o==NULL || o->GetLocking() || o->GetVisible()==0)continue;
-    AABB_AddMQObj2(triangles, doc, o, oi);
-  }
-  Tree tree(triangles.begin(),triangles.end());
-}
-*/
 
 bool IsVisibleFace(MQScene scene, MQObject o, int fi)
 {
@@ -348,13 +306,14 @@ bool IsFrontTriSelected(MQDocument doc, MQScene scene)
 
 //---------------------------------------------------------------------------
 //  TenTenPlugin::Activate
-//    •\¦E”ñ•\¦Ø‚è‘Ö‚¦—v‹
+//    è¡¨ç¤ºãƒ»éè¡¨ç¤ºåˆ‡ã‚Šæ›¿ãˆè¦æ±‚
 //---------------------------------------------------------------------------
 BOOL TenTenPlugin::Activate(MQDocument doc, BOOL flag)
 {
   if(flag)
   {
-    if(win==NULL)win = new TenTenWindow(MQWindow::GetMainWindow());
+    MQWindow mw = MQWindow::GetMainWindow();
+    if(win==NULL)win = new TenTenWindow(mw);
     if(win)win->SetVisible(true);
   } else {
     if(win)win->SetVisible(false);
@@ -369,7 +328,7 @@ BOOL TenTenPlugin::Activate(MQDocument doc, BOOL flag)
     }
   }*/
   
-  // ‚»‚Ì‚Ü‚Üflag‚ğ•Ô‚·
+  // ãã®ã¾ã¾flagã‚’è¿”ã™
   return flag;
 }
 
@@ -383,10 +342,10 @@ void TenTenPlugin::OnDraw(MQDocument doc, MQScene scene, int width, int height)
     param.Color = MQColor(0,0,0);
     param.FontScale = 1.0f;
     param.ScreenPos = MQPoint(width/2.0, height/2.0, 0);
-    CreateDrawingText(doc, L"‘I‘ğ–Ê‚É— –Êƒ|ƒŠƒSƒ“‚ª‚ ‚è‚Ü‚·", param);
+    CreateDrawingText(doc, L"é¸æŠé¢ã«è£é¢ãƒãƒªã‚´ãƒ³ãŒã‚ã‚Šã¾ã™", param);
     param.Color = MQColor(1,1,0);
     param.FontScale = 1.1f;
-    CreateDrawingText(doc, L"‘I‘ğ–Ê‚É— –Êƒ|ƒŠƒSƒ“‚ª‚ ‚è‚Ü‚·", param);
+    CreateDrawingText(doc, L"é¸æŠé¢ã«è£é¢ãƒãƒªã‚´ãƒ³ãŒã‚ã‚Šã¾ã™", param);
     errMsg = 0;
   }
 }
@@ -435,7 +394,10 @@ BOOL TenTenPlugin::AddVertexOnTri(MQDocument doc, int oi, int fi, MQPoint &hitpo
     vidxOld[numfv] = vidxOld[0];
     vcoordOld[numfv] = vcoordOld[0];
     MQCoordinate coord[3];
-    coord[2] = CalcCoord(o->GetVertex(vidxOld[0]), o->GetVertex(vidxOld[1]), o->GetVertex(vidxOld[2]), hitpoint, vcoordOld);
+    MQPoint p1 = o->GetVertex(vidxOld[0]);
+    MQPoint p2 = o->GetVertex(vidxOld[1]);
+    MQPoint p3 = o->GetVertex(vidxOld[2]);
+    coord[2] = CalcCoord(p1, p2, p3, hitpoint, vcoordOld);
     int matidx = o->GetFaceMaterial(fi);
     for(int i=0;i<numfv;i++)
     {
@@ -458,7 +420,7 @@ BOOL TenTenPlugin::AddVertexOnTri(MQDocument doc, int oi, int fi, MQPoint &hitpo
     RedrawAllScene();
     if(bUpdateUndo)
     {
-      OutputDebugStringA("Undo10\n");
+      //OutputDebugStringA("Undo10\n");
       UpdateUndo();
     }
     
@@ -643,7 +605,7 @@ A      >>>>>>>
 A      <<<<<<<
 ...
 
-«
+â†“
 
 ...
 A
@@ -677,7 +639,7 @@ del_vi >>>>>>>
 del_vi <<<<<<<
 ...
 
-«
+â†“
 
 ...
 ...
@@ -854,7 +816,7 @@ bool DeleteVertex2(MQDocument doc, int del_oi, int del_vi, bool bArcSplit)
   
   std::vector<int> relFi;
   relFi.resize(numRelFace);
-  o->GetVertexRelatedFaces(del_vi, &(relFi[0])); //“¯‚¶–Ê”Ô†‚ª•¡”•Ô‚éê‡‚ª‚ ‚é‚Ì‚Å’ˆÓI
+  o->GetVertexRelatedFaces(del_vi, &(relFi[0])); //åŒã˜é¢ç•ªå·ãŒè¤‡æ•°è¿”ã‚‹å ´åˆãŒã‚ã‚‹ã®ã§æ³¨æ„ï¼
   std::sort(relFi.begin(), relFi.end());
   relFi.erase(std::unique(relFi.begin(), relFi.end()), relFi.end());
   numRelFace = relFi.size();

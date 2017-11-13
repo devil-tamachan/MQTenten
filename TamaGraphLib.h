@@ -32,7 +32,7 @@ void MakeUniqueSortedTable_matid(std::vector<MyEdge> &edges, std::vector<int> &r
 
 
 
-void SplitGraphByMatid(std::vector<MyEdge> &edges, std::vector<std::vector<MyEdge>> &splitEdges)
+void SplitGraphByMatid(std::vector<MyEdge> &edges, std::vector<std::vector<MyEdge> > &splitEdges)
 {
   std::vector<int> mattable;
   MakeUniqueSortedTable_matid(edges, mattable);
@@ -49,12 +49,12 @@ void SplitGraphByMatid(std::vector<MyEdge> &edges, std::vector<std::vector<MyEdg
     splitEdges[matidx].push_back(e);
   }
 }
-void SplitGraphByMatid(std::vector<std::vector<MyEdge>> &graphs_src, std::vector<std::vector<MyEdge>> &splitEdges)
+void SplitGraphByMatid(std::vector<std::vector<MyEdge> > &graphs_src, std::vector<std::vector<MyEdge> > &splitEdges)
 {
   int numInGraph = graphs_src.size();
   for(int i=0;i<numInGraph;i++)
   {
-    std::vector<std::vector<MyEdge>> tmpGraphs;
+    std::vector<std::vector<MyEdge> > tmpGraphs;
     SplitGraphByMatid(graphs_src[i], tmpGraphs);
     splitEdges.insert(splitEdges.end(), tmpGraphs.begin(), tmpGraphs.end());
   }

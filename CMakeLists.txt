@@ -22,21 +22,35 @@ INCLUDE_DIRECTORIES( "${MQSDK_INCLUDE_DIR}" )
 
 set(MQTENTEN_TENUCHI 0 CACHE BOOL "Enable Ten-uchi (GPL License Warning!)")
 
-add_library(MQTenTen SHARED
-  MQTenTen.cpp
-  ${MQSDK_INCLUDE_DIR}/MQInit.cpp
-  ${MQSDK_INCLUDE_DIR}/MQPlugin.cpp
-  ${MQSDK_INCLUDE_DIR}/MQWidget.cpp
-  ${MQSDK_INCLUDE_DIR}/MQBasePlugin.cpp
-  ${MQSDK_INCLUDE_DIR}/MQSetting.cpp
-  ${MQSDK_INCLUDE_DIR}/MQ3DLib.cpp
-)
+IF(WIN32)
+  add_library(MQTenTen SHARED
+    MQTenTen.cpp
+    ${MQSDK_INCLUDE_DIR}/MQInit.cpp
+    ${MQSDK_INCLUDE_DIR}/MQPlugin.cpp
+    ${MQSDK_INCLUDE_DIR}/MQWidget.cpp
+    ${MQSDK_INCLUDE_DIR}/MQBasePlugin.cpp
+    ${MQSDK_INCLUDE_DIR}/MQSetting.cpp
+    ${MQSDK_INCLUDE_DIR}/MQ3DLib.cpp
+  )
+  set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /OPT:REF")
+ELSE()
+  add_library(MQTenTen MODULE
+    MQTenTen.cpp
+    ${MQSDK_INCLUDE_DIR}/MQInit.cpp
+    ${MQSDK_INCLUDE_DIR}/MQPlugin.cpp
+    ${MQSDK_INCLUDE_DIR}/MQWidget.cpp
+    ${MQSDK_INCLUDE_DIR}/MQBasePlugin.cpp
+    ${MQSDK_INCLUDE_DIR}/MQSetting.cpp
+    ${MQSDK_INCLUDE_DIR}/MQ3DLib.cpp
+    ${MQSDK_INCLUDE_DIR}/osx/StringUtil.mm
+  )
+  target_link_libraries(MQTenTen "-framework CoreFoundation")
+  target_link_libraries(MQTenTen "-framework Cocoa")
+  set_target_properties(MQTenTen PROPERTIES BUNDLE TRUE)
+ENDIF()
+
 target_link_libraries( MQTenTen ${GMP_LIBRARIES} )
 target_link_libraries( MQTenTen ${MPFR_LIBRARIES} )
-
-IF(WIN32)
-  set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /OPT:REF")
-ENDIF()
 
 if(CMAKE_CL_64)
   set_target_properties(MQTenTen PROPERTIES OUTPUT_NAME "MQTenTen64")
