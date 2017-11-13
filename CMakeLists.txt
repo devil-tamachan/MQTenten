@@ -3,8 +3,13 @@ project (MQTenTen)
 
 add_definitions(-D_UNICODE -DUNICODE)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
-include( ${CGAL_USE_FILE} )
+set(MQTENTEN_TENUCHI 0 CACHE BOOL "Enable Ten-uchi (GPL License Warning!)")
+set(Boost_USE_STATIC_LIBS ON)
+
+if(MQTENTEN_TENUCHI)
+  find_package(CGAL REQUIRED COMPONENTS Core)
+  include( ${CGAL_USE_FILE} )
+endif()
 
 set(MQSDK_DIR "" CACHE PATH "MQInit.cpp")
 
@@ -19,8 +24,6 @@ if(NOT DEFINED MQSDK_INCLUDE_DIR)
 endif()
 
 INCLUDE_DIRECTORIES( "${MQSDK_INCLUDE_DIR}" )
-
-set(MQTENTEN_TENUCHI 0 CACHE BOOL "Enable Ten-uchi (GPL License Warning!)")
 
 IF(WIN32)
   add_library(MQTenTen SHARED
@@ -49,13 +52,12 @@ ELSE()
   set_target_properties(MQTenTen PROPERTIES BUNDLE TRUE)
 ENDIF()
 
-target_link_libraries( MQTenTen ${GMP_LIBRARIES} )
-target_link_libraries( MQTenTen ${MPFR_LIBRARIES} )
-
 if(CMAKE_CL_64)
   set_target_properties(MQTenTen PROPERTIES OUTPUT_NAME "MQTenTen64")
 endif()
 
 if(MQTENTEN_TENUCHI)
   add_definitions(-DENABLE_TENUCHI)
+  target_link_libraries( MQTenTen ${GMP_LIBRARIES} )
+  target_link_libraries( MQTenTen ${MPFR_LIBRARIES} )
 endif()
